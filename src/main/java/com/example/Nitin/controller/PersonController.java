@@ -3,12 +3,11 @@ package com.example.Nitin.controller;
 import com.example.Nitin.entity.Person;
 import com.example.Nitin.service.PersonService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.*;
 
 @Controller
 public class PersonController {
@@ -16,9 +15,16 @@ public class PersonController {
     @Autowired
     private PersonService personService;
 
-    @GetMapping("/")
+    @GetMapping("/list")
     public String list(Model model) {
         model.addAttribute("people", personService.getAll());
+        return "list";
+    }
+
+    @GetMapping("/")
+    public String listPeople(@RequestParam(defaultValue = "0") int page, Model model) {
+        Page<Person> peoplePage = personService.getAllPaginated(page, 5);  // 5 per page
+        model.addAttribute("people", peoplePage);
         return "list";
     }
 
