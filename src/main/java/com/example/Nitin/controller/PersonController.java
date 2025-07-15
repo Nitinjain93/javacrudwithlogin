@@ -7,7 +7,10 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+
+import javax.validation.Valid;
 
 @Controller
 public class PersonController {
@@ -35,7 +38,13 @@ public class PersonController {
     }
 
     @PostMapping("/save")
-    public String save(@ModelAttribute Person person) {
+    public String save(@Valid @ModelAttribute("person") Person person,
+                       BindingResult result,
+                       Model model) {
+        if (result.hasErrors()) {
+            return "form";  // this should be the name of your Thymeleaf form view (e.g., form.html)
+        }
+
         personService.save(person);
         return "redirect:/";
     }

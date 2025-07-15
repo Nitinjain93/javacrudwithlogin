@@ -1,6 +1,6 @@
 package com.example.Nitin.entity;
-import javax.persistence.Entity;
 import javax.persistence.*;
+import javax.validation.constraints.*;
 
 
 @Entity
@@ -8,8 +8,17 @@ public class Person {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @NotBlank(message = "Name is required")
+    @Size(max = 50, message = "Name must not exceed 50 characters")
     private String name;
+
+    @NotBlank(message = "Email is required")
+    @Email(message = "Enter a valid email")
     private String email;
+
+    @NotBlank(message = "Mobile is required")
+    @Pattern(regexp = "^[6-9]\\d{9}$", message = "Mobile must be 10 digits starting with 6-9")
     private String mobile;
 
     public String getMobile() {

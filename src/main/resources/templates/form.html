@@ -16,19 +16,19 @@
         <div class="form-group">
             <label for="name">Name</label>
             <input th:field="*{name}" class="form-control" placeholder="Enter name" required/>
-            <div class="invalid-feedback">Please enter a name.</div>
+            <div class="text-danger" th:if="${#fields.hasErrors('name')}" th:errors="*{name}"></div>
         </div>
 
         <div class="form-group">
             <label for="email">Email</label>
             <input th:field="*{email}" type="email" class="form-control" placeholder="Enter email" required/>
-            <div class="invalid-feedback">Please enter a valid email.</div>
+            <div class="text-danger" th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></div>
         </div>
 
         <div class="form-group">
             <label for="mobile">Mobile</label>
-            <input th:field="*{mobile}" class="form-control" placeholder="Enter mobile number" required/>
-            <div class="invalid-feedback">Please enter a valid mobile number.</div>
+            <input th:field="*{mobile}" class="form-control" placeholder="Enter 10-digit mobile" required />
+            <div class="text-danger" th:if="${#fields.hasErrors('mobile')}" th:errors="*{mobile}"></div>
         </div>
 
         <button type="submit" class="btn btn-success">Save</button>
