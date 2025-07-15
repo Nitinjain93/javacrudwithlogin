@@ -21,7 +21,7 @@
     <table class="table table-bordered table-hover">
         <thead class="thead-dark">
         <tr>
-            <th>ID</th><th>Name</th><th>Email</th><th>Mobile</th><th>Actions</th>
+            <th>ID</th><th>Name</th><th>Email</th><th>Mobile</th><th>Pan</th><th>Actions</th>
         </tr>
         </thead>
         <tbody>
@@ -30,6 +30,7 @@
             <td th:text="${p.name}">John</td>
             <td th:text="${p.email}">john@example.com</td>
             <td th:text="${p.mobile}">1234567890</td>
+            <td th:text="${p.pan}"></td>
             <td>
                 <a th:href="@{'/edit/' + ${p.id}}" class="btn btn-sm btn-info">Edit</a>
                 <a th:href="@{'/delete/' + ${p.id}}" class="btn btn-sm btn-danger"

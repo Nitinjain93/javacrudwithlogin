@@ -20,6 +20,12 @@
         </div>
 
         <div class="form-group">
+            <label for="pan">Pan</label>
+            <input th:field="*{pan}" class="form-control" placeholder="Enter Pan" />
+            <div class="text-danger" th:if="${#fields.hasErrors('pan')}" th:errors="*{pan}"></div>
+        </div>
+
+        <div class="form-group">
             <label for="email">Email</label>
             <input th:field="*{email}" type="email" class="form-control" placeholder="Enter email" required/>
             <div class="text-danger" th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></div>

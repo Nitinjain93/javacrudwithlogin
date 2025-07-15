@@ -1,4 +1,6 @@
 package com.example.Nitin.entity;
+import com.example.Nitin.validation.ValidPAN;
+
 import javax.persistence.*;
 import javax.validation.constraints.*;
 
@@ -20,6 +22,19 @@ public class Person {
     @NotBlank(message = "Mobile is required")
     @Pattern(regexp = "^[6-9]\\d{9}$", message = "Mobile must be 10 digits starting with 6-9")
     private String mobile;
+
+   // @ValidPAN
+    @ValidPAN(message = "Please enter a valid Indian PAN (e.g., ABCDE1234F)") // custom message by override
+
+    private String pan;
+
+    public String getPan() {
+        return pan;
+    }
+
+    public void setPan(String pan) {
+        this.pan = pan;
+    }
 
     public String getMobile() {
         return mobile;
