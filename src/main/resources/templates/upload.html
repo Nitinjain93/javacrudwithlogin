@@ -2,68 +2,95 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <title>Upload CSV</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 30px;
-        }
-
-        .upload-box {
-            border: 1px solid #ccc;
-            padding: 25px;
-            max-width: 500px;
-            background-color: #f9f9f9;
-            border-radius: 10px;
-        }
-
-        .btn {
-            padding: 8px 16px;
-            margin-top: 10px;
-            cursor: pointer;
-            border: none;
-            border-radius: 5px;
-        }
-
-        .btn-upload {
-            background-color: #4CAF50;
-            color: white;
-        }
-
-        .btn-sample {
-            background-color: #007BFF;
-            color: white;
-            text-decoration: none;
-        }
-
-        .message {
-            margin-top: 15px;
-            color: green;
-        }
-
-        .error {
-            color: red;
-        }
-    </style>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
-<body>
+<body class="container mt-4">
 
-<h2>Bulk Upload Person CSV</h2>
+<h2 class="mb-4">Bulk Upload Person CSV</h2>
 
-<div class="upload-box">
-    <form th:action="@{/upload}" method="post" enctype="multipart/form-data">
-        <label>Select CSV File:</label><br>
-        <input type="file" name="file" accept=".csv" required><br>
-        <button class="btn btn-upload" type="submit">Upload</button>
+<!-- CSV Upload Form -->
+<div class="card p-4 mb-4">
+    <form th:action="@{/upload-preview}" method="post" enctype="multipart/form-data">
+        <div class="mb-3">
+            <label for="file" class="form-label">Select CSV File</label>
+            <input class="form-control" type="file" name="file" accept=".csv" required>
+        </div>
+        <div class="d-flex">
+            <button type="submit" class="btn btn-success me-2">Preview</button>
+            <a th:href="@{/sample-csv}" class="btn btn-primary">Download Sample CSV</a>
+        </div>
     </form>
-
-    <br>
-    <a th:href="@{/sample-csv}" class="btn btn-sample">Download Sample CSV</a>
-
-    <p class="message" th:if="${message}" th:text="${message}"></p>
 </div>
 
-<br>
-<a href="/">← Back to List</a>
+<!-- Success/Failure Count -->
+<div th:if="${successCount != null}">
+    <div class="alert alert-info">
+        ✅ Valid Records: <strong th:text="${successCount}"></strong> |
+        ❌ Invalid Records: <strong th:text="${failureCount}"></strong>
+    </div>
+</div>
+
+<!-- Valid Rows -->
+<div th:if="${wrapper != null and wrapper.people != null and #lists.size(wrapper.people) > 0}">
+    <h5>Preview: Valid Records</h5>
+    <form th:action="@{/upload-save}" method="post" th:object="${wrapper}">
+        <table class="table table-bordered table-striped table-sm">
+            <thead class="table-light">
+            <tr><th>Name</th><th>Email</th><th>Mobile</th><th>PAN</th></tr>
+            </thead>
+            <tbody>
+            <tr th:each="p, stat : *{people}">
+                <td><input type="hidden" th:field="*{people[__${stat.index}__].name}" th:value="${p.name}"/>
+                    <span th:text="${p.name}"></span></td>
+                <td><input type="hidden" th:field="*{people[__${stat.index}__].email}" th:value="${p.email}"/>
+                    <span th:text="${p.email}"></span></td>
+                <td><input type="hidden" th:field="*{people[__${stat.index}__].mobile}" th:value="${p.mobile}"/>
+                    <span th:text="${p.mobile}"></span></td>
+                <td><input type="hidden" th:field="*{people[__${stat.index}__].pan}" th:value="${p.pan}"/>
+                    <span th:text="${p.pan}"></span></td>
+            </tr>
+            </tbody>
+        </table>
+        <button class="btn btn-success">Save Valid Records</button>
+    </form>
+</div>
+
+<!-- Invalid Rows -->
+<div th:if="${errors != null and #lists.size(errors) > 0}" class="mt-5">
+    <h5>Preview: Invalid Records</h5>
+    <table class="table table-bordered table-striped table-sm">
+        <thead class="table-light">
+        <tr>
+            <th>Row #</th>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Mobile</th>
+            <th>PAN</th>
+            <th class="text-danger">Error</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="e : ${errors}">
+            <td th:text="${e.rowNum}"></td>
+            <td th:text="${e.rowData[0]}"></td>
+            <td th:text="${e.rowData[1]}"></td>
+            <td th:text="${e.rowData[2]}"></td>
+            <td th:text="${e.rowData[3]}"></td>
+            <td class="text-danger" th:text="${e.error}"></td>
+        </tr>
+        </tbody>
+    </table>
+
+    <!-- Download Failed Records -->
+    <form th:action="@{/download-errors}" method="get">
+        <input type="hidden" name="errors" th:value="${errorCSV}" />
+        <button type="submit" class="btn btn-outline-danger">Download Failed Rows CSV</button>
+    </form>
+</div>
+
+<div class="mt-4">
+    <a href="/" class="btn btn-secondary">← Back to List</a>
+</div>
 
 </body>
 </html>
