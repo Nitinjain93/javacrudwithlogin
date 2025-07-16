@@ -9,8 +9,17 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.validation.Valid;
+
+import org.springframework.core.io.ByteArrayResource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.core.io.Resource;
+
 
 @Controller
 public class PersonController {
@@ -60,5 +69,36 @@ public class PersonController {
         personService.delete(id);
         return "redirect:/";
     }
+
+    @PostMapping("/upload")
+    public String uploadCSV(@RequestParam("file") MultipartFile file, RedirectAttributes redirectAttributes) {
+        try {
+            personService.saveFromCSV(file);
+            redirectAttributes.addFlashAttribute("message", "CSV uploaded successfully!");
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("message", "Error: " + e.getMessage());
+        }
+        return "redirect:/upload";
+    }
+
+    @GetMapping("/upload")
+    public String uploadPage() {
+        return "upload";
+    }
+
+    @GetMapping("/sample-csv")
+    public ResponseEntity<Resource> downloadSampleCSV() {
+        String content = "name,email,mobile,pan\n" +
+                "John Doe,john@example.com,9876543210,ABCDE1234F\n" +
+                "Jane Smith,jane@example.com,9123456789,XYZAB1234K\n";
+
+        ByteArrayResource resource = new ByteArrayResource(content.getBytes());
+
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=sample_person.csv")
+                .contentType(MediaType.parseMediaType("text/csv"))
+                .body(resource);
+    }
+
 }
 
